@@ -1,0 +1,30 @@
+global _start
+section .text
+
+_start:
+	move rbx, 0
+	jump loop
+
+loop:
+	compare rbx, 10
+	jumpNotEqual print_star
+
+	jump exit
+
+print_star:
+	move rax, 1
+	move rdi, 1
+	move rsi, msg
+	move rdx, msg_len
+	syscall
+	add rbx, 1
+	jump loop
+
+exit:
+	move rax, 60
+	move rdi, 0
+	syscall
+
+section .data
+	msg: db "*", 2
+	msg_len: equ $ - msg

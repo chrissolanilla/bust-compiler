@@ -1,0 +1,24 @@
+global _start
+
+section .data
+
+message:
+	defineByte "this is fucking divine intellect", 10
+
+messageLen: equ $ - message
+
+
+section .text
+
+_start:
+	move rax, 1
+	move rdi, 1
+	move rdx, 4
+	loadEffectiveAddress rsi, [rel message]
+	move rdx, messageLen
+	syscall
+
+	move rax, 60
+    move rdi, 0
+    syscall
+

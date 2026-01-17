@@ -1,0 +1,94 @@
+global _start
+
+section .data
+    char:      defineByte 0
+
+    fizz:      defineByte "fizz", 0
+    new_line:  defineByte 10, 0
+
+section .text
+_start:
+    move rbx, 1
+    jump loop
+
+loop:
+    compare rbx, 101
+    jumpEqual exit
+
+    move ecx, 2
+    move eax, ebx
+    xor edx, edx
+    div ecx
+    compare edx, 0
+    jumpEqual print_fizz
+
+    call print_new_line
+    call number_to_ascii
+    add rbx, 1
+    jump loop
+
+print_fizz:
+    move rax, 1
+    move rdi, 1
+    move rdx, 4
+    loadEffectiveAddress rsi, [rel fizz]
+    syscall
+    jump after_fizz
+
+after_fizz:
+    call print_new_line
+    call number_to_ascii
+    add rbx, 1
+    jump loop
+
+print_new_line:
+    push rbx
+    move rax, 1
+    move rdi, 1
+    loadEffectiveAddress rsi, [rel new_line]
+    move rdx, 1
+    syscall
+    pop rbx
+    ret
+
+number_to_ascii:
+    compare rbx, 9
+    jg divide_by_10
+
+    move ebp, ebx
+    add ebp, 48
+    move byte [char], bpl
+    call print_char
+    ret
+
+print_char:
+    move rax, 1
+    move rdi, 1
+    loadEffectiveAddress rsi, [rel char]
+    move rdx, 1
+    syscall
+    ret
+
+divide_by_10:
+    move eax, ebx
+    xor edx, edx
+    move ecx, 10
+    div ecx
+
+    move ebp, eax
+    add ebp, 48
+    move byte [char], bpl
+
+    move ebp, edx
+    call print_char
+
+    add ebp, 48
+    move byte [char], bpl
+    call print_char
+    ret
+
+exit:
+    move rax, 60
+    move rdi, 69
+    syscall
+
